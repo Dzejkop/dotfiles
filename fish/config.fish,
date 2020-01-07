@@ -1,0 +1,4 @@
+set -x RUSTC_WRAPPER sccache
+set -x EDITOR nvim
+
+alias ls lsd
