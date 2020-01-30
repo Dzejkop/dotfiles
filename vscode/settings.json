@@ -5,18 +5,16 @@
     "editor.fontFamily": "'Fira Code Retina', 'monospace', monospace, 'Droid Sans Fallback'",
     "editor.fontLigatures": true,
     "workbench.colorTheme": "Shades of Purple",
-    "workbench.iconTheme": "material-icon-theme",
+    "workbench.iconTheme": "vscode-great-icons",
     "[sql]": {
         "editor.defaultFormatter": "mtxr.sqltools"
     },
     "gitlens.views.repositories.autoReveal": false,
     "gitlens.views.repositories.files.layout": "tree",
-    "rust.target_dir": "target",
     "git.autofetch": true,
     "debug.allowBreakpointsEverywhere": true,
     "showGitMetrics": false,
     "editor.minimap.enabled": false,
-    "vim.disableExtension": true,
     "zenMode.hideLineNumbers": false,
     "extensions.ignoreRecommendations": true,
     "cSpell.enabledLanguageIds": [
@@ -56,4 +54,10 @@
     "terminal.integrated.rendererType": "experimentalWebgl",
     "[csv]": {},
     "diffEditor.ignoreTrimWhitespace": true,
+    "vim.disableExtension": true,
+    "vim.useSystemClipboard": true,
+    "rust-analyzer.cargo-watch.command": "check --all --tests",
+    "tableformatter.markdown.oneSpacePadding": false,
+    "workbench.tree.renderIndentGuides": "always",
+    "workbench.editor.labelFormat": "short",
 }
