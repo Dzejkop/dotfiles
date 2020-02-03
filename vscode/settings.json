@@ -4,7 +4,7 @@
     "window.zoomLevel": 0,
     "editor.fontFamily": "'Fira Code Retina', 'monospace', monospace, 'Droid Sans Fallback'",
     "editor.fontLigatures": true,
-    "workbench.colorTheme": "Shades of Purple",
+    "workbench.colorTheme": "SynthWave '84",
     "workbench.iconTheme": "vscode-great-icons",
     "[sql]": {
         "editor.defaultFormatter": "mtxr.sqltools"
@@ -60,4 +60,7 @@
     "tableformatter.markdown.oneSpacePadding": false,
     "workbench.tree.renderIndentGuides": "always",
     "workbench.editor.labelFormat": "short",
+    "cSpell.userWords": [
+        "performant"
+    ],
 }
