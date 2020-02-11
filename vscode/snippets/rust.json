@@ -11,20 +11,45 @@
             "dbg!(&$1);"
         ]
     },
+    "Display helper": {
+        "prefix": "trace_display",
+        "body": [
+            "let d_$1 = format!(\"{:?}\", $1);",
+            "dbg!(&d_$1);"
+        ]
+    },
     "Parse Unwrap": {
         "prefix": "pu",
         "body": [
-            "$1.parse::<$2>().unwrap()"
+            "${1:s}.parse::<$2>().unwrap()"
         ]
     },
-    "Test mod": {
+    "test module": {
         "prefix": "test module",
         "body": [
             "#[cfg(test)]",
             "mod tests {",
-            "    use super::*;",
+            "\tuse super::*;",
             "",
-            "    $1",
+            "\t$0",
+            "}"
+        ]
+    },
+    "test": {
+        "prefix": "test",
+        "body": [
+            "#[test]",
+            "fn ${1:test_name}() {",
+            "\t$0",
+            "}"
+        ]
+    },
+    "case": {
+        "prefix": "test case",
+        "body": [
+            "#[test_case($1)]",
+            "fn ${2:test_case_name}() {",
+            "\t$0",
             "}"
         ]
     },
@@ -32,7 +57,7 @@
         "prefix": "pstruct",
         "body": [
             "pub struct $1 {",
-            "    $2",
+            "\t$2",
             "}"
         ]
     },
@@ -40,7 +65,7 @@
         "prefix": "penum",
         "body": [
             "pub enum $1 {",
-            "    $2",
+            "\t$2",
             "}"
         ]
     },
@@ -48,6 +73,37 @@
         "prefix": "newtype",
         "body": [
             "pub struct $1($2);"
+        ]
+    },
+    "map": {
+        "prefix": ".map",
+        "body": [
+            ".map(|$1| ${2:unimplemented!()})$0"
+        ]
+    },
+    "and_then": {
+        "prefix": ".and_then",
+        "body": [
+            ".and_then(|$1| ${2:unimplemented!()})$0"
+        ]
+    },
+    "StructOpt Struct": {
+        "prefix": "structopt",
+        "body": [
+            "#[derive(Debug, Clone, StructOpt)]",
+            "struct ${1:Opt} {",
+            "\t$0",
+            "}"
+        ]
+    },
+    "StructOpt Enum": {
+        "prefix": "enumopt",
+        "body": [
+            "#[derive(Debug, Clone, StructOpt)]",
+            "#[structopt(rename_all = \"kebab-case\"]",
+            "enum ${1:Opt} {",
+            "\t$0",
+            "}"
         ]
     }
 }

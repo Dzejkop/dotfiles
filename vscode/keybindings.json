@@ -54,5 +54,9 @@
         "key": "ctrl+r",
         "command": "-rust-analyzer.run",
         "when": "editorTextFocus && editorLangId == 'rust'"
+    },
+    {
+        "key": "shift+f1",
+        "command": "search.action.openNewEditor"
     }
 ]

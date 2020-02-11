@@ -1,0 +1,5 @@
+[alias]
+taaf = "test --all --all-features"
+caaf = "check --all --all-features"
+ta   = "test --all"
+ca   = "check --all"

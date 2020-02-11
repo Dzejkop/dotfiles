@@ -18,6 +18,7 @@ ms-vscode.csharp
 mtxr.sqltools
 rebornix.ruby
 redhat.vscode-yaml
+RobbOwen.synthwave-vscode
 ryanlaws.toggle-case
 sdras.night-owl
 serayuzgur.crates
@@ -25,9 +26,6 @@ shuworks.vscode-table-formatter
 slevesque.vscode-hexdump
 softwaredotcom.swdc-vscode
 streetsidesoftware.code-spell-checker
-TabNine.tabnine-vscode
 vadimcn.vscode-lldb
 vscode-icons-team.vscode-icons
-vscodevim.vim
 wingrunr21.vscode-ruby
-
