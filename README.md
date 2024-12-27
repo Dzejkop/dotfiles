@@ -1,0 +1,4 @@
+# Install
+```
+stow -v ./home/
+```

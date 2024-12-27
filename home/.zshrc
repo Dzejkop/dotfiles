@@ -87,6 +87,9 @@ source $ZSH/oh-my-zsh.sh
 # else
 #   export EDITOR='mvim'
 # fi
+#
+
+export EDITOR='lvim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -99,30 +102,39 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-bindkey "^[[1;5C" forward-word
-bindkey "^[[1;5D" backward-word
+# bindkey "^[[1;5C" forward-word
+# bindkey "^[[1;5D" backward-word
 
 alias lg="lazygit"
 alias ld="lazydocker"
 
+alias ls="lsd -l"
+
+# TODO: Remove
 # Wasmer
 export WASMER_DIR="/Users/jakubtrad/.wasmer"
 [ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
 
+# TODO: Remove
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 export NARGO_HOME="/Users/jakubtrad/.nargo"
-
 export PATH="$PATH:$NARGO_HOME/bin"
+
 export PATH=/Users/jakubtrad/.local/bin:$PATH
 
+# Initialize zoxide
+eval "$(zoxide init zsh)"
 
-# BEGIN opam configuration
-# This is useful if you're using opam as it adds:
-#   - the correct directories to the PATH
-#   - auto-completion for the opam binary
-# This section can be safely removed at any time if needed.
-[[ ! -r '/Users/jakubtrad/.opam/opam-init/init.zsh' ]] || source '/Users/jakubtrad/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
-# END opam configuration
+# Yazi cwd capable wrapper
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
