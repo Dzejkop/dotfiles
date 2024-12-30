@@ -89,7 +89,10 @@ source $ZSH/oh-my-zsh.sh
 # fi
 #
 
-export EDITOR='lvim'
+alias vim="nvim"
+alias vi="nvim"
+
+export EDITOR='nvim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
