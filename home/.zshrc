@@ -141,3 +141,6 @@ function y() {
 	rm -f -- "$tmp"
 }
 
+# Activate mise
+eval "$(~/.local/bin/mise activate zsh)"
+
