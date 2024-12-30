@@ -4,6 +4,9 @@ init:
 stow:
   stow -v home
 
+sim:
+  stow -nv home
+
 unstow:
   stow -v -D home
 
