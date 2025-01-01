@@ -29,6 +29,7 @@ return {
         "tsx",
 
         "elixir",
+        "heex",
 
         "rust",
         "toml",
