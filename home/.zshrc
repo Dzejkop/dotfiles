@@ -8,7 +8,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="robbyrussell" # set by `omz`
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,9 +70,48 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git fzf docker)
+plugins=(git fzf docker docker-compose kubectl rust mix)
 
 source $ZSH/oh-my-zsh.sh
+
+# checks whether a command exists using -v, -V or which
+exists() {
+    [[ $# -eq 0 ]] && {
+        echo "Usage: exists command_name"
+        return 2
+    }
+
+    typeset command_name="$1"
+    typeset command_exists=false
+
+    # Try command -v first (preferred method)
+    if command -v "$command_name" >/dev/null 2>&1; then
+        command_exists=true
+    fi
+
+    # Try with -V
+    if command -V "$command_name" > /dev/null 2>&1; then
+      command_exists=true
+    fi
+
+    # Try with which
+    if which "$command_name" >/dev/null 2>&1; then
+        command_exists=true
+    fi
+
+    [[ "$command_exists" = false ]] && {
+        echo "✗ '$command_name' not found"
+        return 1
+    }
+
+    return 0
+}
+
+alias_if_exists() {
+  if exists $1; then
+    alias $2=$1
+  fi
+}
 
 # User configuration
 
@@ -81,66 +120,45 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-#
-
-alias vim="nvim"
-alias vi="nvim"
-
-export EDITOR='nvim'
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-# bindkey "^[[1;5C" forward-word
-# bindkey "^[[1;5D" backward-word
-
-alias lg="lazygit"
-alias ld="lazydocker"
-
-alias ls="lsd -l"
-
-# TODO: Remove
-# Wasmer
-export WASMER_DIR="/Users/jakubtrad/.wasmer"
-[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
-
-# TODO: Remove
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 export NARGO_HOME="/Users/jakubtrad/.nargo"
 export PATH="$PATH:$NARGO_HOME/bin"
 
 export PATH=/Users/jakubtrad/.local/bin:$PATH
 
-# Initialize zoxide
-eval "$(zoxide init zsh)"
+alias_if_exists nvim vim
+alias_if_exists nvim vi
+alias_if_exists lazygit lg
+alias_if_exists lazydocker ld
+alias_if_exists lsd ls
 
-# Yazi cwd capable wrapper
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		builtin cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
+if exists wasmer; then
+  # Wasmer
+  export WASMER_DIR="/Users/jakubtrad/.wasmer"
+  [ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
+fi
 
-# Activate mise
-eval "$(~/.local/bin/mise activate zsh)"
+
+if exists zoxide; then
+  # Initialize zoxide
+  eval "$(zoxide init zsh)"
+
+  alias cd=z 
+fi
+
+if exists yazi; then
+  # Yazi cwd capable wrapper
+  function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+      builtin cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+  }
+fi
+
+if exists mise; then
+  # Activate mise
+  eval "$(~/.local/bin/mise activate zsh)"
+fi
 
