@@ -120,10 +120,10 @@ alias_if_exists() {
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-export NARGO_HOME="/Users/jakubtrad/.nargo"
+export NARGO_HOME="$HOME/.nargo"
 export PATH="$PATH:$NARGO_HOME/bin"
 
-export PATH=/Users/jakubtrad/.local/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
 
 alias_if_exists nvim vim
 alias_if_exists nvim vi
@@ -131,9 +131,9 @@ alias_if_exists lazygit lg
 alias_if_exists lazydocker ld
 alias_if_exists lsd ls
 
-if exists wasmer; then
+if ls "$HOME/.wasmer" >/dev/null 2>&1; then
   # Wasmer
-  export WASMER_DIR="/Users/jakubtrad/.wasmer"
+  export WASMER_DIR="$HOME/.wasmer"
   [ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
 fi
 
