@@ -1,26 +1,27 @@
 -- load defaults i.e lua_lsp
-local configs = require("nvchad.configs.lspconfig")
+local configs = require "nvchad.configs.lspconfig"
 
 configs.defaults()
 
-local lspconfig = require("lspconfig")
+local lspconfig = require "lspconfig"
 
 local servers = {
   html = {},
   cssls = {},
 
   elixirls = {
-    cmd = { vim.fn.stdpath("data") .. "/mason/bin/elixir-ls" }
+    cmd = { vim.fn.stdpath "data" .. "/mason/bin/elixir-ls" },
   },
 
   lua_ls = {},
-  
+
   rust_analyzer = {},
 
   marksman = {},
 
   mdx_analyzer = {},
-  astro = {}
+  astro = {},
+  gopls = {},
 }
 
 for name, opts in pairs(servers) do
@@ -30,4 +31,3 @@ for name, opts in pairs(servers) do
 
   lspconfig[name].setup(opts)
 end
-

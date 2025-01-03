@@ -14,4 +14,17 @@ M.base46 = {
 	-- },
 }
 
+M.ui = {
+  statusline = {
+    theme = "default",
+    separator_style = "default",
+    -- order = { "mode", "cwd", "git"},
+    -- modules = {
+    --   f = "%f",
+    --   ff = "%f:%l",
+    --   sep = " "
+    -- }
+  }
+}
+
 return M

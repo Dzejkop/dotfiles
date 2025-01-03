@@ -35,6 +35,7 @@ return {
         "toml",
 
         "astro",
+        "go",
       },
     },
   },
