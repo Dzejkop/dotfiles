@@ -33,7 +33,15 @@ return {
 
         "rust",
         "toml",
+
+        "astro",
       },
     },
+  },
+  {
+    "davidmh/mdx.nvim",
+    lazy = false,
+    config = true,
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
   },
 }

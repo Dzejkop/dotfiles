@@ -17,7 +17,10 @@ local servers = {
   
   rust_analyzer = {},
 
-  marksman = {}
+  marksman = {},
+
+  mdx_analyzer = {},
+  astro = {}
 }
 
 for name, opts in pairs(servers) do
