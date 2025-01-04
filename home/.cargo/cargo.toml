@@ -1,0 +1,5 @@
+[alias]
+cw = "check --workspace"
+tw = "test --workspace"
+ntw = "nextest run --workspace"
+
