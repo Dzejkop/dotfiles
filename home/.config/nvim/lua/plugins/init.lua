@@ -45,4 +45,10 @@ return {
     config = true,
     dependencies = { "nvim-treesitter/nvim-treesitter" },
   },
+  {
+    "folke/todo-comments.nvim",
+    lazy = false,
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {}
+  },
 }
