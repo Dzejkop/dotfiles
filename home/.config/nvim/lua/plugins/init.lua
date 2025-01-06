@@ -64,4 +64,20 @@ return {
     build = "make",
     dependencies = "nvim-telescope/telescope.nvim",
   },
+  {
+    "saecki/crates.nvim",
+    tag = "stable",
+    event = { "BufRead Cargo.toml" },
+    config = function()
+      require("crates").setup()
+    end,
+  },
+  {
+    "David-Kunz/cmp-npm",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    ft = "json",
+    config = function()
+      require("cmp-npm").setup {}
+    end,
+  },
 }
