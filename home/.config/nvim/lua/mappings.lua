@@ -3,6 +3,7 @@ require "nvchad.mappings"
 -- add yours here
 
 local map = vim.keymap.set
+local cmd = vim.api.nvim_create_user_command
 
 map("n", ";", ":", { desc = "CMD enter command mode" })
 
@@ -15,6 +16,13 @@ map("n", "<leader>li", "<cmd> Telescope lsp_implementations <cr>", { desc = "tel
 -- Useful
 map("n", "<leader>fk", "<cmd> Telescope keymaps <cr>", { desc = "telescope keymaps" })
 map("n", "<leader>fc", "<cmd> Telescope commands <cr>", { desc = "telescope commands" })
+
+-- Snacks
+cmd("Lazygit", function()
+  Snacks.lazygit()
+end, { desc = "Toggle lazygit" })
+
+map("n", "<leader>lg", "<cmd> Lazygit <cr>", { desc = "open lazygit" })
 
 -- Goto functionality
 
