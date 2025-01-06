@@ -109,6 +109,7 @@ return {
     ---@type snacks.Config
     opts = {
       lazygit = {},
+      win = {},
     },
   },
 }
