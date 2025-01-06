@@ -21,7 +21,7 @@ require("lazy").setup({
     branch = "v2.5",
     import = "nvchad.plugins",
   },
-
+  change_detection = { notify = false },
   { import = "plugins" },
 }, lazy_config)
 
