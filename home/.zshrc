@@ -125,6 +125,8 @@ export PATH="$PATH:$NARGO_HOME/bin"
 
 export PATH="$HOME/.local/bin:$PATH"
 
+export EDITOR="nvim"
+
 alias_if_exists nvim vim
 alias_if_exists nvim vi
 alias_if_exists lazygit lg
