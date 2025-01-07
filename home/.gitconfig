@@ -1,6 +1,10 @@
 [alias]
 	co = checkout
 	st = status
+  sw = switch
+  br = branch
+  ci = commit
+  pushf = push --force-with-lease
 
 [include]
   path = ~/.gitcreds
