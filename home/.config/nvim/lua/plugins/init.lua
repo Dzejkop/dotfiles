@@ -112,4 +112,22 @@ return {
       win = {},
     },
   },
+  {
+    "stevearc/dressing.nvim",
+    opts = {},
+  },
+  {
+    "LintaoAmons/bookmarks.nvim",
+    tag = "v2.3.0",
+    lazy = false,
+    dependencies = {
+      { "kkharji/sqlite.lua" },
+      { "nvim-telescope/telescope.nvim" },
+      { "stevearc/dressing.nvim" }, -- optional: better UI
+    },
+    config = function()
+      local opts = {}
+      require("bookmarks").setup(opts) -- you must call setup to init sqlite db
+    end,
+  },
 }

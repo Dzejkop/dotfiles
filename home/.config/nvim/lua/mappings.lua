@@ -19,6 +19,8 @@ map("n", "<leader>li", "<cmd> Telescope lsp_implementations <cr>", { desc = "tel
 -- Useful
 map("n", "<leader>fk", "<cmd> Telescope keymaps <cr>", { desc = "telescope keymaps" })
 map("n", "<leader>fc", "<cmd> Telescope commands <cr>", { desc = "telescope commands" })
+map("n", "<leader>fj", "<cmd> Telescope jumplist <cr>", { desc = "telescope jumplist" })
+map("n", "<leader>fb", "<cmd> Telescope buffers <cr>", { desc = "telescope buffers" })
 
 -- Snacks - lazygit
 cmd("Lazygit", function()
@@ -49,6 +51,13 @@ end
 cmd("Far", far_fun, { desc = "Search & Replace: With GrugFar" })
 cmd("SearchAndReplace", far_fun, { desc = "Search & Replace: With GrugFar" })
 
--- Goto functionality
+-- Remove the default mapping to focus the nvimtree
+vim.keymap.del("n", "<leader>e")
+
+map("n", "<leader>e", "<cmd> NvimTreeToggle <cr>", { desc = "toggle nvim tree" })
+
+-- Bookmarks
+map("n", "<leader>Bm", "<cmd> BookmarksMark <cr>", { desc = "Bookmark"} )
+map("n", "<leader>Bg", "<cmd> BookmarksGoto <cr>", { desc = "Find and go to bookmarks"} )
 
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
