@@ -147,6 +147,10 @@ if exists zoxide; then
   alias cd=z 
 fi
 
+if exists zellij; then
+  alias za="zellij action"
+fi
+
 if exists yazi; then
   # Yazi cwd capable wrapper
   function y() {
