@@ -1,0 +1,7 @@
+[alias]
+	co = checkout
+	st = status
+
+[include]
+  path = ~/.gitcreds
+
