@@ -130,4 +130,9 @@ return {
       require("bookmarks").setup(opts) -- you must call setup to init sqlite db
     end,
   },
+  {
+    "sindrets/diffview.nvim",
+    lazy = false,
+    opts = {}
+  },
 }
