@@ -135,4 +135,10 @@ return {
     lazy = false,
     opts = {}
   },
+  {
+    "nvzone/typr",
+    dependencies = "nvzone/volt",
+    opts = {},
+    cmd = { "Typr", "TyprStats" }
+  }
 }

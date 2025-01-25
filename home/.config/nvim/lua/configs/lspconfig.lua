@@ -22,6 +22,8 @@ local servers = {
   mdx_analyzer = {},
   astro = {},
   gopls = {},
+
+  pyright = {},
 }
 
 for name, opts in pairs(servers) do
