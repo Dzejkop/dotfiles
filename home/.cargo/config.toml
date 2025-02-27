@@ -1,6 +1,7 @@
 [alias]
 cw = "check --workspace"
 cwaf = "check --workspace --all-features"
+cwt = "check --workspace --tests"
 tw = "test --workspace"
 ntw = "nextest run --workspace"
 
