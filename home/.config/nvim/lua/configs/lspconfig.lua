@@ -8,6 +8,7 @@ local lspconfig = require "lspconfig"
 local servers = {
   html = {},
   cssls = {},
+  ts_ls = {},
 
   elixirls = {
     cmd = { vim.fn.stdpath "data" .. "/mason/bin/elixir-ls" },
