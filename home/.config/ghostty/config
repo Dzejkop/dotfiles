@@ -1,1 +1,16 @@
 theme = ayu
+
+window-decoration = false
+
+macos-titlebar-style = transparent
+
+keybind = cmd+t=unbind
+keybind = cmd+c=unbind
+keybind = cmd+w=unbind
+keybind = cmd+opt+left=unbind
+keybind = cmd+opt+right=unbind
+keybind = cmd+right=unbind
+keybind = cmd+left=unbind
+keybind = opt+right=unbind
+keybind = opt+left=unbind
+
