@@ -137,6 +137,8 @@ alias lvim='NVIM_APPNAME=lazyvim nvim'
 alias lzvim='NVIM_APPNAME=lazyvim nvim'
 alias lazyvim='NVIM_APPNAME=lazyvim nvim'
 
+alias cvim='NVIM_APPNAME=cvim nvim'
+
 if ls "$HOME/.wasmer" >/dev/null 2>&1; then
   # Wasmer
   export WASMER_DIR="$HOME/.wasmer"
