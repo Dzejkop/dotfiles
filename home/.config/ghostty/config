@@ -1,9 +1,5 @@
 theme = ayu
 
-window-decoration = false
-
-macos-titlebar-style = transparent
-
 keybind = cmd+t=unbind
 keybind = cmd+c=unbind
 keybind = cmd+w=unbind
