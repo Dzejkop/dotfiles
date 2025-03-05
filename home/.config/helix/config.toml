@@ -1,0 +1,10 @@
+theme = "ayu_mirage"
+
+[editor]
+line-number = "relative"
+
+[editor.whitespace]
+render = "all"
+
+[editor.indent-guides]
+render = true
