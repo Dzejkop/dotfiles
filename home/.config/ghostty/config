@@ -1,4 +1,4 @@
-theme = ayu
+theme = catppuccin-macchiato
 
 keybind = cmd+t=unbind
 keybind = cmd+c=unbind
