@@ -25,6 +25,8 @@ local servers = {
   gopls = {},
 
   pyright = {},
+
+  solidity_ls = {},
 }
 
 for name, opts in pairs(servers) do
