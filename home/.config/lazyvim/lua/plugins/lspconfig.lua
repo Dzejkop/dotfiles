@@ -3,6 +3,8 @@ return {
   opts = {
     servers = {
       solidity_ls = {},
+
+      kotlin_language_server = {},
     },
   },
 }
