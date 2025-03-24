@@ -4,7 +4,9 @@
 
 vim.keymap.set("n", "<leader>tt", "<cmd>TSContextToggle<cr>", { desc = "Toggle tree-sitter context" })
 
-vim.keymap.set({ "n", "v" }, "<leader>hw", "<cmd>HopWord<cr>", { desc = "Hop word" })
-vim.keymap.set({ "n", "v" }, "<leader>ha", "<cmd>HopAnywhere<cr>", { desc = "Hop anywhere" })
-vim.keymap.set({ "n", "v" }, "<leader>hlw", "<cmd>HopWordCurrentLine<cr>", { desc = "Hop word current line" })
-vim.keymap.set({ "n", "v" }, "<leader>hla", "<cmd>HopAnywhereCurrentLine<cr>", { desc = "Hop anywhere current line" })
+local nv = { "n", "v" }
+
+vim.keymap.set(nv, "<leader>hw", "<cmd>HopWord<cr>", { desc = "Hop word" })
+vim.keymap.set(nv, "<leader>ha", "<cmd>HopAnywhere<cr>", { desc = "Hop anywhere" })
+vim.keymap.set(nv, "<leader>hlw", "<cmd>HopWordCurrentLine<cr>", { desc = "Hop word current line" })
+vim.keymap.set(nv, "<leader>hla", "<cmd>HopAnywhereCurrentLine<cr>", { desc = "Hop anywhere current line" })
