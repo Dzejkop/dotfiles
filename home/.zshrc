@@ -128,22 +128,13 @@ export PATH="$HOME/.local/bin:$PATH"
 # Add scripts to PATH
 export PATH=$HOME/scripts:$PATH
 
-
 alias_if_exists nvim vim
 alias_if_exists nvim vi
 alias_if_exists lazygit lg
 alias_if_exists lazydocker ld
 alias_if_exists lsd ls
 
-alias lvim='NVIM_APPNAME=lazyvim nvim'
-alias lzvim='NVIM_APPNAME=lazyvim nvim'
-alias lazyvim='NVIM_APPNAME=lazyvim nvim'
-
-export lazyvim() {
-  NVIM_APPNAME=lazyvim nvim "$@"
-}
-
-export EDITOR=lazyvim
+export EDITOR=lvim
 
 alias cvim='NVIM_APPNAME=cvim nvim'
 
