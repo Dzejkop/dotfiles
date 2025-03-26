@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell" # set by `omz`
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git fzf docker docker-compose kubectl rust mix)
+plugins=(git fzf docker docker-compose kubectl rust mix vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
