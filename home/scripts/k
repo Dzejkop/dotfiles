@@ -18,6 +18,14 @@ Switched context to new-context
 I have no previous commands in this context
 """
 
+try:
+    import uv
+except ImportError:
+    import sys
+    print("uv module not found. Please install it (e.g. pip install uv).")
+    sys.exit(1)
+uv.bootstrap()
+
 import argparse
 import json
 import os
