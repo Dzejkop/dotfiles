@@ -23,7 +23,8 @@ import json
 import os
 import subprocess
 import sys
-import openai_agent  # Ensure the latest OpenAI Agent SDK is installed and accessible
+import asyncio
+from agents import Agent, Runner, function_tool, handoff, trace
 
 CACHE_FILE = os.path.expanduser("~/.k_cache.json")
 ACTIVE_CONTEXT_FILE = os.path.expanduser("~/.k_active_context")
@@ -50,13 +51,23 @@ def get_last_command(context):
     history = cache.get(context, [])
     return history[-1] if history else None
 
-def get_command_from_agent(user_input):
-    """
-    Use OpenAI's Agent SDK to process the natural language input
-    and produce a shell command.
-    """
-    result = openai_agent.run(user_input)  # Hypothetical API call
-    return result.strip()
+@function_tool
+def exec_shell_command(cmd: str) -> str:
+    """Execute shell command and return its output."""
+    try:
+        output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
+        return output.strip()
+    except subprocess.CalledProcessError as e:
+        return f"Error executing command: {e.output}"
+
+@function_tool
+def get_last_command_tool(context: str) -> str:
+    """Return the last command from the cache for the given context."""
+    last = get_last_command(context)
+    if last:
+        return f"My last command was {last}"
+    return "I have no previous commands in this context"
+
 
 def get_active_context():
     if os.path.exists(ACTIVE_CONTEXT_FILE):
@@ -110,5 +121,40 @@ def main():
 
     update_context(active_context, command_input)
 
+agent = Agent(
+    name="Terminal Assistant",
+    instructions=(
+        "You are a terminal assistant. Convert user commands in natural language into "
+        "shell commands using the exec_shell_command tool. If asked about the last command, "
+        "invoke get_last_command_tool with the given context."
+    ),
+    tools=[exec_shell_command, get_last_command_tool],
+)
+
+async def main():
+    parser = argparse.ArgumentParser(description="Terminal Assistant")
+    parser.add_argument("--switch-context", type=str, help="Switch to a new context")
+    parser.add_argument("user_input", nargs="*", help="Command or query")
+    args = parser.parse_args()
+
+    if args.switch_context:
+        set_active_context(args.switch_context)
+        print(f"Switched context to {args.switch_context}")
+        sys.exit(0)
+
+    active_context = get_active_context()
+    command_input = " ".join(args.user_input).strip()
+
+    if not command_input:
+        print("Please provide a command.")
+        sys.exit(1)
+
+    async with trace(workflow_name="Terminal Assistant Workflow"):
+        result = await Runner.run(agent, input=command_input)
+        output = result.final_output
+        print(output)
+
+    update_context(active_context, command_input)
+
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
