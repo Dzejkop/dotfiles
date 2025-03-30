@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+"""
+Terminal Assistant using OpenAI's Agent SDK.
+
+This script listens for a command, processes it via the agent to determine
+a shell command to execute, and executes it. It caches conversation history
+per context in a persistent cache. Contexts can be switched using the
+--switch-context flag.
+
+Usage examples:
+> k list all files in the current directory
+filea fileb filec
+> k what was your last command?
+My last command was to list all files in the current directory
+> k --switch-context new-context 
+Switched context to new-context
+> k what was your last command?
+I have no previous commands in this context
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import openai_agent  # Ensure the latest OpenAI Agent SDK is installed and accessible
+
+CACHE_FILE = os.path.expanduser("~/.k_cache.json")
+ACTIVE_CONTEXT_FILE = os.path.expanduser("~/.k_active_context")
+
+def load_cache():
+    if os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_cache(cache):
+    with open(CACHE_FILE, "w") as f:
+        json.dump(cache, f, indent=2)
+
+def update_context(context, command):
+    cache = load_cache()
+    history = cache.get(context, [])
+    history.append(command)
+    cache[context] = history
+    save_cache(cache)
+
+def get_last_command(context):
+    cache = load_cache()
+    history = cache.get(context, [])
+    return history[-1] if history else None
+
+def get_command_from_agent(user_input):
+    """
+    Use OpenAI's Agent SDK to process the natural language input
+    and produce a shell command.
+    """
+    result = openai_agent.run(user_input)  # Hypothetical API call
+    return result.strip()
+
+def get_active_context():
+    if os.path.exists(ACTIVE_CONTEXT_FILE):
+        with open(ACTIVE_CONTEXT_FILE, "r") as f:
+            context = f.read().strip()
+            if context:
+                return context
+    # Default context if none is set
+    with open(ACTIVE_CONTEXT_FILE, "w") as f:
+        f.write("default")
+    return "default"
+
+def set_active_context(new_context):
+    with open(ACTIVE_CONTEXT_FILE, "w") as f:
+        f.write(new_context)
+
+def main():
+    parser = argparse.ArgumentParser(description="Terminal Assistant")
+    parser.add_argument("--switch-context", type=str, help="Switch to a new context")
+    parser.add_argument("user_input", nargs="*", help="Command or query")
+    args = parser.parse_args()
+
+    if args.switch_context:
+        set_active_context(args.switch_context)
+        print(f"Switched context to {args.switch_context}")
+        sys.exit(0)
+
+    active_context = get_active_context()
+    command_input = " ".join(args.user_input).strip()
+
+    if not command_input:
+        print("Please provide a command.")
+        sys.exit(1)
+
+    if command_input.lower() == "what was your last command?":
+        last = get_last_command(active_context)
+        if last:
+            print(f"My last command was {last}")
+        else:
+            print("I have no previous commands in this context")
+        sys.exit(0)
+
+    # Use the agent to convert the natural language input to a shell command
+    shell_command = get_command_from_agent(command_input)
+
+    try:
+        result = subprocess.check_output(shell_command, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
+        print(result)
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing command: {e.output}")
+
+    update_context(active_context, command_input)
+
+if __name__ == "__main__":
+    main()
