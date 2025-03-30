@@ -10,5 +10,4 @@ trap 'rm -f "$tmpfile"' EXIT
 "$EDITOR" "$tmpfile"
 
 # Output the contents of the edited file
-echo "=== Buffer Contents ==="
 cat "$tmpfile"
