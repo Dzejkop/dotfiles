@@ -96,7 +96,9 @@ async def main():
     args = parser.parse_args()
 
     if args.ctx:
-        print("Context switching is disabled in single conversation mode. Ignoring.")
+        set_active_context(args.ctx)
+        print(f"Switched context to {args.ctx}")
+        sys.exit(0)
 
     cache = load_cache()
     active_context = "chat"
