@@ -52,9 +52,18 @@ def save_cache(cache):
 
 def set_active_context(new_context):
     ensure_dirs()
+    cache = load_cache()
+    cache["__active__"] = new_context
+    if new_context not in cache:
+        cache[new_context] = []
+    save_cache(cache)
 
-    with open(MAIN_CACHE_FILE, "w") as f:
-        f.write(new_context)
+def update_context(ctx, new_message):
+    cache = load_cache()
+    if ctx not in cache:
+        cache[ctx] = []
+    cache[ctx].append(new_message)
+    save_cache(cache)
 
 
 agent = Agent(
@@ -79,8 +88,9 @@ async def main():
         print(f"Switched context to {args.ctx}")
         sys.exit(0)
 
-    ctx = load_cache()
-    print(ctx)
+    cache = load_cache()
+    active_context = cache.get("__active__", "default")
+    print(f"Active context: {active_context}")
 
     command_input = " ".join(args.user_input).strip()
 
@@ -99,7 +109,7 @@ async def main():
         ):
             print(event.data.delta, end="", flush=True)
 
-    # update_context(active_context, command_input)
+    update_context(active_context, command_input)
 
 
 if __name__ == "__main__":
