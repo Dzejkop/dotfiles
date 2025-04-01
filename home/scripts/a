@@ -53,19 +53,15 @@ def save_cache(cache):
 
 def set_active_context(new_context):
     ensure_dirs()
-    cache = load_cache()
-    # Retrieve the conversation for the new context, defaulting to an empty list if not present.
-    new_context_convo = cache.get(new_context, [])
-    # Replace the current main context file with the new context from cache and save the current active context.
-    new_cache = {"__active__": new_context, new_context: new_context_convo}
-    save_cache(new_cache)
+    # In single conversation mode, resetting the context means clearing the chat conversation.
+    save_cache({"chat": []})
 
 
-def update_context(ctx, new_message):
+def update_context(new_message):
     cache = load_cache()
-    if ctx not in cache:
-        cache[ctx] = []
-    cache[ctx].append(new_message)
+    if "chat" not in cache:
+        cache["chat"] = []
+    cache["chat"].append(new_message)
     save_cache(cache)
 
 
@@ -88,13 +84,11 @@ async def main():
     args = parser.parse_args()
 
     if args.ctx:
-        set_active_context(args.ctx)
-        print(f"Switched context to {args.ctx}")
-        sys.exit(0)
+        print("Context switching is disabled in single conversation mode. Ignoring.")
 
     cache = load_cache()
-    active_context = cache.get("__active__", "default")
-    print(f"Active context: {active_context}")
+    active_context = "chat"
+    print("Using chat conversation")
 
     command_input = " ".join(args.user_input).strip()
 
