@@ -54,10 +54,11 @@ def save_cache(cache):
 def set_active_context(new_context):
     ensure_dirs()
     cache = load_cache()
-    cache["__active__"] = new_context
-    if new_context not in cache:
-        cache[new_context] = []
-    save_cache(cache)
+    # Retrieve the conversation for the new context, defaulting to an empty list if not present.
+    new_context_convo = cache.get(new_context, [])
+    # Replace the current main context file with the new context from cache and save the current active context.
+    new_cache = {"__active__": new_context, new_context: new_context_convo}
+    save_cache(new_cache)
 
 def update_context(ctx, new_message):
     cache = load_cache()
