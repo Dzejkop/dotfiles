@@ -61,7 +61,6 @@ def update_context(cache, new_message):
     if "chat" not in cache:
         cache["chat"] = []
     cache["chat"].append(new_message)
-    save_cache(cache)
 
 
 agent = Agent(
@@ -99,8 +98,8 @@ async def main():
     print("Printing input")
     print(command_input)
 
-    update_context(active_context, {"role": "user", "content": command_input})
-    cache = load_cache()
+    update_context(cache, {"role": "user", "content": command_input})
+    save_cache(cache)
     conversation_history = cache.get(active_context, [])
     context_items = conversation_history
     result = Runner.run_streamed(agent, input=context_items)
@@ -113,7 +112,8 @@ async def main():
             full_response += delta
             print(delta, end="", flush=True)
 
-    update_context(active_context, {"role": "assistant", "content": full_response})
+    update_context(cache, {"role": "assistant", "content": full_response})
+    save_cache(cache)
 
 
 if __name__ == "__main__":
