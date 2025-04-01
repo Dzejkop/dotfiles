@@ -43,7 +43,7 @@ def load_cache():
             if context:
                 return json.loads(context)
 
-    return {}
+    return {"meta": {"name": "chat"}, "chat": []}
 
 
 def save_cache(cache):
@@ -67,8 +67,8 @@ def set_active_context(new_context):
         save_cache(new_context_content)
         os.remove(new_context_file)
     else:
-        # Create an entirely new (empty) context.
-        save_cache({})
+        # Create an entirely new (empty) context with the new context name.
+        save_cache({"meta": {"name": new_context}, "chat": []})
 
 
 def update_context(cache, new_message):
