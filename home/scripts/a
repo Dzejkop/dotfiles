@@ -9,6 +9,7 @@ import os
 import subprocess
 import sys
 import asyncio
+import datetime
 from openai.types.responses import ResponseTextDeltaEvent
 from agents import Agent, Runner, function_tool, WebSearchTool, handoff, trace
 
@@ -68,12 +69,7 @@ def update_context(ctx, new_message):
 
 agent = Agent(
     name="Terminal Assistant",
-    instructions="""
-        You are 'a' the terminal assistant.
-        Your job is to provide assistance to the user in a terminal environment.
-        Make sure to be brief, to the point.
-    """,
-    tools=[WebSearchTool(), exec_shell_command],
+    instructions=f\"\"\"\n        You are 'a' the terminal assistant.\n        Your job is to provide assistance to the user in a terminal environment.\n        Make sure to be brief, to the point.\n        Current working directory: {os.getcwd()}\n        Current time: {datetime.datetime.now()}\n    \"\"\",\n    tools=[WebSearchTool(), exec_shell_command],
 )
 
 
