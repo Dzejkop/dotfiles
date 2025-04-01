@@ -21,7 +21,7 @@ MAIN_CACHE_FILE = os.path.expanduser("~/.cache/a/cache.json")
 async def exec_shell_command(cmd: str) -> str:
     print("Executing command:", cmd)
     decision = input("Do you want to execute this command? (y/N): ")
-    if decision.lower() != 'y':
+    if decision.lower() != "y":
         return "Command execution rejected by user."
     """Execute shell command and return its output."""
     try:
