@@ -60,6 +60,7 @@ def set_active_context(new_context):
     new_cache = {"__active__": new_context, new_context: new_context_convo}
     save_cache(new_cache)
 
+
 def update_context(ctx, new_message):
     cache = load_cache()
     if ctx not in cache:
