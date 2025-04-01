@@ -57,8 +57,7 @@ def set_active_context(new_context):
     save_cache({"chat": []})
 
 
-def update_context(new_message):
-    cache = load_cache()
+def update_context(cache, new_message):
     if "chat" not in cache:
         cache["chat"] = []
     cache["chat"].append(new_message)
