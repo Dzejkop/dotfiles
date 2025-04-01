@@ -1,26 +1,7 @@
 #!/usr/bin/env -S uv run --python 3.10 --script
 # /// script
-# dependencies = ["openai-agents"]
+# dependencies = ["openai>=1.70.0", "openai-agents>=0.0.7"]
 # ///
-
-"""
-Terminal Assistant using OpenAI's Agent SDK.
-
-This script listens for a command, processes it via the agent to determine
-a shell command to execute, and executes it. It caches conversation history
-per context in a persistent cache. Contexts can be switched using the
---switch-context flag.
-
-Usage examples:
-> k list all files in the current directory
-filea fileb filec
-> k what was your last command?
-My last command was to list all files in the current directory
-> k --switch-context new-context
-Switched context to new-context
-> k what was your last command?
-I have no previous commands in this context
-"""
 
 import argparse
 import json
@@ -28,40 +9,16 @@ import os
 import subprocess
 import sys
 import asyncio
+from openai.types.responses import ResponseTextDeltaEvent
 from agents import Agent, Runner, function_tool, WebSearchTool, handoff, trace
 
-CACHE_FILE = os.path.expanduser("~/.k_cache.json")
-ACTIVE_CONTEXT_FILE = os.path.expanduser("~/.k_active_context")
-
-
-def load_cache():
-    if os.path.exists(CACHE_FILE):
-        with open(CACHE_FILE, "r") as f:
-            return json.load(f)
-    return {}
-
-
-def save_cache(cache):
-    with open(CACHE_FILE, "w") as f:
-        json.dump(cache, f, indent=2)
-
-
-def update_context(context, command):
-    cache = load_cache()
-    history = cache.get(context, [])
-    history.append(command)
-    cache[context] = history
-    save_cache(cache)
-
-
-def get_last_command(context):
-    cache = load_cache()
-    history = cache.get(context, [])
-    return history[-1] if history else None
+CONTEXTS_DIR = os.path.expanduser("~/.cache/a/contexts/")
+MAIN_CACHE_FILE = os.path.expanduser("~/.cache/a/cache.json")
 
 
 @function_tool
-def exec_shell_command(cmd: str) -> str:
+async def exec_shell_command(cmd: str) -> str:
+    print("Executing command:", cmd)
     """Execute shell command and return its output."""
     try:
         output = subprocess.check_output(
@@ -72,106 +29,77 @@ def exec_shell_command(cmd: str) -> str:
         return f"Error executing command: {e.output}"
 
 
-@function_tool
-def get_last_command_tool(context: str) -> str:
-    """Return the last command from the cache for the given context."""
-    last = get_last_command(context)
-    if last:
-        return f"My last command was {last}"
-    return "I have no previous commands in this context"
+def ensure_dirs():
+    os.makedirs(CONTEXTS_DIR, exist_ok=True)
 
 
-def get_active_context():
-    if os.path.exists(ACTIVE_CONTEXT_FILE):
-        with open(ACTIVE_CONTEXT_FILE, "r") as f:
+def load_cache():
+    ensure_dirs()
+
+    if os.path.exists(MAIN_CACHE_FILE):
+        with open(MAIN_CACHE_FILE, "r") as f:
             context = f.read().strip()
             if context:
-                return context
-    # Default context if none is set
-    with open(ACTIVE_CONTEXT_FILE, "w") as f:
-        f.write("default")
-    return "default"
+                return json.loads(context)
+
+    return {}
+
+
+def save_cache(cache):
+    with open(MAIN_CACHE_FILE, "w") as f:
+        json.dump(cache, f, indent=2)
 
 
 def set_active_context(new_context):
-    with open(ACTIVE_CONTEXT_FILE, "w") as f:
+    ensure_dirs()
+
+    with open(MAIN_CACHE_FILE, "w") as f:
         f.write(new_context)
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Terminal Assistant")
-    parser.add_argument("--switch-context", type=str, help="Switch to a new context")
-    parser.add_argument("user_input", nargs="*", help="Command or query")
-    args = parser.parse_args()
-
-    if args.switch_context:
-        set_active_context(args.switch_context)
-        print(f"Switched context to {args.switch_context}")
-        sys.exit(0)
-
-    active_context = get_active_context()
-    command_input = " ".join(args.user_input).strip()
-
-    if not command_input:
-        print("Please provide a command.")
-        sys.exit(1)
-
-    if command_input.lower() == "what was your last command?":
-        last = get_last_command(active_context)
-        if last:
-            print(f"My last command was {last}")
-        else:
-            print("I have no previous commands in this context")
-        sys.exit(0)
-
-    # Use the agent to convert the natural language input to a shell command
-    shell_command = get_command_from_agent(command_input)
-
-    try:
-        result = subprocess.check_output(
-            shell_command, shell=True, stderr=subprocess.STDOUT, universal_newlines=True
-        )
-        print(result)
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing command: {e.output}")
-
-    update_context(active_context, command_input)
 
 
 agent = Agent(
     name="Terminal Assistant",
-    instructions=(
-        "You are a terminal assistant. Convert user commands in natural language into "
-        "shell commands using the exec_shell_command tool. If asked about the last command, "
-        "invoke get_last_command_tool with the given context."
-    ),
-    tools=[WebSearchTool, exec_shell_command, get_last_command_tool],
+    instructions="""
+        You are 'a' the terminal assistant.
+        Your job is to provide assistance to the user in a terminal environment.
+        Make sure to be brief, to the point.
+    """,
+    tools=[WebSearchTool(), exec_shell_command],
 )
 
 
 async def main():
     parser = argparse.ArgumentParser(description="Terminal Assistant")
-    parser.add_argument("--switch-context", type=str, help="Switch to a new context")
+    parser.add_argument("-c", "--ctx", type=str, help="Switch to a new context")
     parser.add_argument("user_input", nargs="*", help="Command or query")
     args = parser.parse_args()
 
-    if args.switch_context:
-        set_active_context(args.switch_context)
-        print(f"Switched context to {args.switch_context}")
+    if args.ctx:
+        set_active_context(args.ctx)
+        print(f"Switched context to {args.ctx}")
         sys.exit(0)
 
-    active_context = get_active_context()
+    ctx = load_cache()
+    print(ctx)
+
     command_input = " ".join(args.user_input).strip()
 
     if not command_input:
-        print("Please provide a command.")
-        sys.exit(1)
+        command_input = (
+            "User did not provide input. Infer what they might want you to do next"
+        )
 
-    result = await Runner.run(agent, input=command_input)
-    output = result.final_output
-    print(output)
+    print("Printing input")
+    print(command_input)
 
-    update_context(active_context, command_input)
+    result = Runner.run_streamed(agent, input=command_input)
+    async for event in result.stream_events():
+        if event.type == "raw_response_event" and isinstance(
+            event.data, ResponseTextDeltaEvent
+        ):
+            print(event.data.delta, end="", flush=True)
+
+    # update_context(active_context, command_input)
 
 
 if __name__ == "__main__":
