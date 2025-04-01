@@ -102,22 +102,21 @@ async def main():
     print("Printing input")
     print(command_input)
 
+    update_context(active_context, {"role": "user", "content": command_input})
+    cache = load_cache()
     conversation_history = cache.get(active_context, [])
-    context_items = []
-    for item in conversation_history:
-        if isinstance(item, dict) and "role" in item and "content" in item:
-            context_items.append(item)
-        else:
-            context_items.append({"role": "user", "content": item})
-    context_items.append({"role": "user", "content": command_input})
+    context_items = conversation_history
     result = Runner.run_streamed(agent, input=context_items)
+    full_response = ""
     async for event in result.stream_events():
         if event.type == "raw_response_event" and isinstance(
             event.data, ResponseTextDeltaEvent
         ):
-            print(event.data.delta, end="", flush=True)
+            delta = event.data.delta
+            full_response += delta
+            print(delta, end="", flush=True)
 
-    update_context(active_context, command_input)
+    update_context(active_context, {"role": "assistant", "content": full_response})
 
 
 if __name__ == "__main__":
