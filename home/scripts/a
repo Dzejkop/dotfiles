@@ -69,7 +69,8 @@ def update_context(ctx, new_message):
 
 agent = Agent(
     name="Terminal Assistant",
-    instructions=f\"\"\"\n        You are 'a' the terminal assistant.\n        Your job is to provide assistance to the user in a terminal environment.\n        Make sure to be brief, to the point.\n        Current working directory: {os.getcwd()}\n        Current time: {datetime.datetime.now()}\n    \"\"\",\n    tools=[WebSearchTool(), exec_shell_command],
+    instructions="""\n        You are 'a' the terminal assistant.\n        Your job is to provide assistance to the user in a terminal environment.\n        Make sure to be brief, to the point.\n        Current working directory: {cwd}\n        Current time: {time}\n    """.format(cwd=os.getcwd(), time=datetime.datetime.now()),
+    tools=[WebSearchTool(), exec_shell_command],
 )
 
 
