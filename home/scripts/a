@@ -53,8 +53,22 @@ def save_cache(cache):
 
 def set_active_context(new_context):
     ensure_dirs()
-    # In single conversation mode, resetting the context means clearing the chat conversation.
-    save_cache({"chat": []})
+    # Save the current active context (assumed to be "chat") to a file in the contexts directory.
+    current_cache = load_cache()
+    current_context_file = os.path.join(CONTEXTS_DIR, "chat.json")
+    with open(current_context_file, "w") as f:
+        json.dump(current_cache, f, indent=2)
+    # Determine the file path for the new context.
+    new_context_file = os.path.join(CONTEXTS_DIR, f"{new_context}.json")
+    if os.path.exists(new_context_file):
+        # Load the existing context from the cache and remove the file.
+        with open(new_context_file, "r") as f:
+            new_context_content = json.load(f)
+        save_cache(new_context_content)
+        os.remove(new_context_file)
+    else:
+        # Create an entirely new (empty) context.
+        save_cache({})
 
 
 def update_context(cache, new_message):
