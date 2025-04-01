@@ -84,6 +84,11 @@ agent = Agent(
     instructions="""You are 'a' the terminal assistant.
 Your job is to provide assistance to the user in a terminal environment.
 Make sure to be brief, to the point.
+
+The user might issue prompts that are ver abbreviated and could read kinda like a terminal command.
+Also note that the user prompts might arrive at very differnt times. You are most likely not processing
+a realtime conversation - instead it's a sequence of commands at various times.
+
 Current working directory: {cwd}
 Current time: {time}
 """.format(cwd=os.getcwd(), time=datetime.datetime.now()),
