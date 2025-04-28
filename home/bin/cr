@@ -10,8 +10,10 @@ fi
 REPO=$1
 OWNER=$(echo "$REPO" | cut -d'/' -f1)
 
+# Change dir to root (~/Projects)
+cd ~/Projects || exit
+
 # Create the directory structure and clone the repo
 mkdir -p "$OWNER"
 cd "$OWNER" || exit
 gh repo clone "$REPO"
-
