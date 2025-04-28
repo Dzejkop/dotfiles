@@ -9,5 +9,4 @@ trap 'rm -f "$tmpfile"' EXIT
 # Open the temporary file in your preferred editor
 "$EDITOR" "$tmpfile"
 
-# Output the contents of the edited file
-cat "$tmpfile"
+pbcopy <"$tmpfile"
