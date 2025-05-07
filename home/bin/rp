@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Create a temporary file for editing
+tmpdir=$(mktemp -d /tmp/rp.XXXXXX)
+
+# Ensure the temporary file is removed on script exit
+trap 'rm -rf "$tmpdir"' EXIT
+
+cd "$tmpdir" || exit
+
+# Process args to determine crate type
+libArg=""
+fileToOpen="$tmpdir/src/main.rs"
+
+for arg in "$@"; do
+  case $arg in
+  --lib)
+    libArg="--lib"
+    fileToOpen="$tmpdir/src/lib.rs"
+    ;;
+  esac
+done
+
+# Initialize an empty Rust project
+cargo init $libArg --name playground
+
+# Process arguments
+for arg in "$@"; do
+  case $arg in
+  --serde)
+    cargo add serde --features derive
+    cargo add serde_json
+    ;;
+  esac
+done
+
+# Build
+cargo build
+
+# Open the temporary file in your preferred editor
+"$EDITOR" "$fileToOpen"
