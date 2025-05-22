@@ -7,7 +7,9 @@ show_help() {
   echo ""
   echo "Options:"
   echo "  --lib          Create a library crate instead of a binary"
-  echo "  --serde        Add serde with derive features and serde_json"
+  echo "  -s --serde        Add serde with derive features and serde_json"
+  echo "  -a --async        Add tokio runtime and setup async main, only works in bin mode"
+  echo "  -b --basic        Add basic deps like eyre"
   echo "  --help         Display this help message and exit"
   echo ""
   exit 0
@@ -43,9 +45,15 @@ cargo init $libArg --name playground
 # Process arguments
 for arg in "$@"; do
   case $arg in
-  --serde)
+  --serde | -s)
     cargo add serde --features derive
     cargo add serde_json
+    ;;
+  --async | -a)
+    cargo add tokio --features full
+    ;;
+  --basic | -b)
+    cargo add eyre
     ;;
   esac
 done
