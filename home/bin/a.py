@@ -19,10 +19,12 @@ MAIN_CACHE_FILE = os.path.expanduser("~/.cache/a/cache.json")
 
 @function_tool
 async def exec_shell_command(cmd: str) -> str:
-    print("Executing command: ", cmd)
-    decision = input("Do you want to execute this command? (y/N): ")
-    if decision.lower() != "y":
-        return "Command execution rejected by user."
+    if not args.yes:
+        print("Executing command: ", cmd)
+        decision = input("Do you want to execute this command? (y/N): ")
+        if decision.lower() != "y":
+            return "Command execution rejected by user."
+
     """Execute shell command and terminate the process."""
     try:
         subprocess.run(cmd, shell=True, check=True)
@@ -81,50 +83,57 @@ def update_context(cache, new_message):
     cache["chat"].append(new_message)
 
 
-cmd_agent = Agent(
-    name="Cmd Agent",
-    instructions="""
-    You are a cmd agent. Your job is to execute a shell command on the user's behalf.
+def create_agents():
+    cmd_agent = Agent(
+        name="Cmd Agent",
+        instructions="""
+        You are a cmd agent. Your job is to execute a shell command on the user's behalf.
 
-    You have a tool at your disposal that will execute a command you specify. 
+        You have a tool at your disposal that will execute a command you specify. 
 
-    Current working directory: {cwd}
-""".format(cwd=os.getcwd()),
-    tools=[exec_shell_command],
-)
+        Current working directory: {cwd}
+        """.format(cwd=os.getcwd()),
+        tools=[exec_shell_command],
+    )
 
-basic_agent = Agent(
-    name="Basic",
-    instructions="""
-    You are a basic question answering agent. Your job is to answer any questions the user might have.
-    """,
-    tools=[WebSearchTool()],
-)
+    basic_agent = Agent(
+        name="Basic",
+        instructions="""
+        You are a basic question answering agent. Your job is to answer any questions the user might have.
+        """,
+        tools=[WebSearchTool()],
+    )
 
-planner = Agent(
-    name="Planner",
-    instructions="""
-    Your name is "a".
+    planner = Agent(
+        name="Planner",
+        instructions="""
+        Your name is "a".
 
-    You are a terminal assistant planner.
+        You are a terminal assistant planner.
 
-    Your job is to figure out the user's intent and handoff the request to an appropriate agent.
+        Your job is to figure out the user's intent and handoff the request to an appropriate agent.
 
-    The user might ask you questions, issue tasks, etc.
+        The user might ask you questions, issue tasks, etc.
 
-    At your disposal are the following agents:
-    1. Basic agent - this agent is designed to answer basic questions
-    2. Cmd agent - this agent is designed to execute a shell command
+        At your disposal are the following agents:
+        1. Basic agent - this agent is designed to answer basic questions
+        2. Cmd agent - this agent is designed to execute a shell command
 
-    Don't pay too much attention to your chat histroy - it's only relevant to answer questions about past user interactions.
-    Don't try to infer what the user wants to do know based on previous content - unless the user explicitly requests to do that.
-""",
-    handoffs=[basic_agent, cmd_agent],
-    model="gpt-4o-2024-08-06",
-)
+        Don't pay too much attention to your chat histroy - it's only relevant to answer questions about past user interactions.
+        Don't try to infer what the user wants to do know based on previous content - unless the user explicitly requests to do that.
+        """,
+        handoffs=[basic_agent, cmd_agent],
+        model="gpt-4o-2024-08-06",
+    )
+
+    return cmd_agent, basic_agent, planner
+
+
+cmd_agent, basic_agent, planner = create_agents()
 
 
 async def main():
+    global args
     parser = argparse.ArgumentParser(description="Terminal Assistant")
     parser.add_argument("-c", "--ctx", type=str, help="Switch to a new context")
     parser.add_argument("-y", "--yes", action="store_true", help="Auto run commands")
