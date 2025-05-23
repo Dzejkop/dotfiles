@@ -9,7 +9,6 @@ import os
 import subprocess
 import sys
 import asyncio
-import datetime
 from openai.types.responses import ResponseTextDeltaEvent
 from agents import Agent, Runner, function_tool, WebSearchTool, handoff, trace
 
@@ -91,6 +90,8 @@ def create_agents():
 
         You have a tool at your disposal that will execute a command you specify. 
 
+        Try to always execute some command for the user.
+
         Current working directory: {cwd}
         """.format(cwd=os.getcwd()),
         tools=[exec_shell_command],
@@ -116,13 +117,15 @@ def create_agents():
         The user might ask you questions, issue tasks, etc.
 
         At your disposal are the following agents:
-        1. Basic agent - this agent is designed to answer basic questions
-        2. Cmd agent - this agent is designed to execute a shell command
+        1. Cmd agent - this agent is designed to execute a shell command
+        2. Basic agent - this agent is designed to answer basic questions
+
+        You should in general favour executing commands to answering questions.
 
         Don't pay too much attention to your chat histroy - it's only relevant to answer questions about past user interactions.
         Don't try to infer what the user wants to do know based on previous content - unless the user explicitly requests to do that.
         """,
-        handoffs=[basic_agent, cmd_agent],
+        handoffs=[cmd_agent, basic_agent],
         model="gpt-4o-2024-08-06",
     )
 
