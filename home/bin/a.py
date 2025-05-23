@@ -1,0 +1,146 @@
+#!/usr/bin/env -S uv run --python 3.10 --script
+# /// script
+# dependencies = ["openai>=1.70.0", "openai-agents>=0.0.7"]
+# ///
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import asyncio
+import datetime
+from openai.types.responses import ResponseTextDeltaEvent
+from agents import Agent, Runner, function_tool, WebSearchTool, handoff, trace
+
+CONTEXTS_DIR = os.path.expanduser("~/.cache/a/contexts/")
+MAIN_CACHE_FILE = os.path.expanduser("~/.cache/a/cache.json")
+
+
+@function_tool
+async def exec_shell_command(cmd: str) -> str:
+    print("Executing command:", cmd)
+    decision = input("Do you want to execute this command? (y/N): ")
+    if decision.lower() != "y":
+        return "Command execution rejected by user."
+    """Execute shell command and return its output."""
+    try:
+        output = subprocess.check_output(
+            cmd, shell=True, stderr=subprocess.STDOUT, universal_newlines=True
+        )
+        return output.strip()
+    except subprocess.CalledProcessError as e:
+        return f"Error executing command: {e.output}"
+
+
+def ensure_dirs():
+    os.makedirs(CONTEXTS_DIR, exist_ok=True)
+
+
+def load_cache():
+    ensure_dirs()
+
+    if os.path.exists(MAIN_CACHE_FILE):
+        with open(MAIN_CACHE_FILE, "r") as f:
+            context = f.read().strip()
+            if context:
+                return json.loads(context)
+
+    return {"meta": {"name": "chat"}, "chat": []}
+
+
+def save_cache(cache):
+    with open(MAIN_CACHE_FILE, "w") as f:
+        json.dump(cache, f, indent=2)
+
+
+def set_active_context(new_context):
+    ensure_dirs()
+    current_cache = load_cache()
+    # Retrieve the current context's name from the cache meta, defaulting to "chat"
+    current_context_name = current_cache.get("meta", {}).get("name", "chat")
+    # Save the current active context to its own file based on its name
+    current_context_file = os.path.join(CONTEXTS_DIR, f"{current_context_name}.json")
+    with open(current_context_file, "w") as f:
+        json.dump(current_cache, f, indent=2)
+    # Determine the file path for the new context.
+    new_context_file = os.path.join(CONTEXTS_DIR, f"{new_context}.json")
+    if os.path.exists(new_context_file):
+        # Load the existing context from its file and remove the file.
+        with open(new_context_file, "r") as f:
+            new_context_content = json.load(f)
+        save_cache(new_context_content)
+        os.remove(new_context_file)
+    else:
+        # Create an entirely new (empty) context with the new context name.
+        save_cache({"meta": {"name": new_context}, "chat": []})
+
+
+def update_context(cache, new_message):
+    if "chat" not in cache:
+        cache["chat"] = []
+    cache["chat"].append(new_message)
+
+
+agent = Agent(
+    name="Terminal Assistant",
+    instructions="""You are 'a' the terminal assistant.
+Your job is to provide assistance to the user in a terminal environment.
+Make sure to be brief, to the point.
+
+The user might issue prompts that are ver abbreviated and could read kinda like a terminal command.
+Also note that the user prompts might arrive at very differnt times. You are most likely not processing
+a realtime conversation - instead it's a sequence of commands at various times.
+
+Current working directory: {cwd}
+Current time: {time}
+""".format(cwd=os.getcwd(), time=datetime.datetime.now()),
+    tools=[WebSearchTool(), exec_shell_command],
+)
+
+
+async def main():
+    parser = argparse.ArgumentParser(description="Terminal Assistant")
+    parser.add_argument("-c", "--ctx", type=str, help="Switch to a new context")
+    parser.add_argument("user_input", nargs="*", help="Command or query")
+    args = parser.parse_args()
+
+    if args.ctx:
+        set_active_context(args.ctx)
+        print(f"Switched context to {args.ctx}")
+        sys.exit(0)
+
+    cache = load_cache()
+    active_context = "chat"
+    print("Using chat conversation")
+
+    command_input = " ".join(args.user_input).strip()
+
+    if not command_input:
+        command_input = (
+            "User did not provide input. Infer what they might want you to do next"
+        )
+
+    print("Printing input")
+    print(command_input)
+
+    update_context(cache, {"role": "user", "content": command_input})
+    save_cache(cache)
+    conversation_history = cache.get(active_context, [])
+    context_items = conversation_history
+    result = Runner.run_streamed(agent, input=context_items)
+    full_response = ""
+    async for event in result.stream_events():
+        if event.type == "raw_response_event" and isinstance(
+            event.data, ResponseTextDeltaEvent
+        ):
+            delta = event.data.delta
+            full_response += delta
+            print(delta, end="", flush=True)
+
+    update_context(cache, {"role": "assistant", "content": full_response})
+    save_cache(cache)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
