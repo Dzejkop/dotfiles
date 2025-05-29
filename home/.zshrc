@@ -123,6 +123,8 @@ alias_if_exists() {
 export NARGO_HOME="$HOME/.nargo"
 export PATH="$PATH:$NARGO_HOME/bin"
 
+export PATH="${HOME}/.bb:${PATH}"
+
 export PATH="$HOME/.local/bin:$PATH"
 
 # Add scripts to PATH
