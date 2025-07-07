@@ -5,6 +5,8 @@ return {
     servers = {
       solidity_ls = {},
 
+      terraformls = {},
+
       kotlin_language_server = {},
     },
   },
