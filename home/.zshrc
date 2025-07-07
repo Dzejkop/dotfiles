@@ -74,6 +74,11 @@ plugins=(git fzf docker docker-compose kubectl rust mix vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
+# Automatically source all scripts in $HOME/scripts
+for script in "$HOME/scripts"/*.sh; do
+  [[ -r "$script" ]] && source "$script"
+done
+
 # checks whether a command exists using -v, -V or which
 exists() {
     [[ $# -eq 0 ]] && {
