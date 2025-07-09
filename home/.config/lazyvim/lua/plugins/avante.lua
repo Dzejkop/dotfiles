@@ -9,7 +9,7 @@ return {
     providers = {
       openai = {
         endpoint = "https://api.openai.com/v1",
-        model = "o4-mini-high",
+        model = "o3-mini",
       },
     },
   },
