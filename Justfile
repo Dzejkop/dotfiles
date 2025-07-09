@@ -2,13 +2,13 @@ init:
   git submodule update --init --recursive
   
 stow:
-  stow -v home
+  stow -t "$HOME" -v home
 
 sim:
-  stow -nv home
+  stow -t "$HOME" -nv home
 
 unstow:
-  stow -v -D home
+  stow -t "$HOME" -v -D home
 
 mac-install:
   brew install jesseduffield/lazygit/lazygit
