@@ -6,13 +6,11 @@ return {
     -- add any opts here
     -- for example
     provider = "openai",
-    openai = {
-      endpoint = "https://api.openai.com/v1",
-      model = "o3-mini",
-      timeout = 30000,
-      temperature = 0,
-      max_completion_tokens = 8192, -- Increase this to include reasoning tokens (for reasoning models)
-      reasoning_effort = "low", -- low|medium|high, only used for reasoning models
+    providers = {
+      openai = {
+        endpoint = "https://api.openai.com/v1",
+        model = "o4-mini-high",
+      },
     },
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
