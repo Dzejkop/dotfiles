@@ -39,5 +39,9 @@ cdp() {
 
   if [[ -n $choice ]]; then
     cd "$base/$choice" || return
+
+    if [[ -n $ZELLIJ_SESSION_NAME ]]; then
+      zellij action rename-tab "$choice"
+    fi
   fi
 }
