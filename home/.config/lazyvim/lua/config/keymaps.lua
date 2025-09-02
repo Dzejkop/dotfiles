@@ -2,7 +2,7 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
-vim.keymap.set("n", "<leader>ut", "<cmd>TSContextToggle<cr>", { desc = "Toggle tree-sitter context" })
+vim.keymap.set("n", "<leader>ut", "<cmd>TSContext toggle<cr>", { desc = "Toggle tree-sitter context" })
 
 local nv = { "n", "v" }
 
