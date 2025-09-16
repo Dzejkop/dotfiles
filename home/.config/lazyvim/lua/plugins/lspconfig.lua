@@ -7,6 +7,8 @@ return {
 
       terraformls = {},
 
+      gleam = {},
+
       kotlin_language_server = {},
     },
   },
