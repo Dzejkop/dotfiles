@@ -19,7 +19,6 @@ cr() {
   cd "$owner" || exit
   gh repo clone "$repo"
 
-  gh repo clone "$repo"
   local repo_name
   repo_name=$(echo "$repo" | cut -d'/' -f2)
   cd "$repo_name" || exit
